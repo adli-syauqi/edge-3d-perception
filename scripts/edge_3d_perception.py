@@ -10,14 +10,12 @@ from pyorbbecsdk import Pipeline, Config, OBSensorType, OBAlignMode, FrameSet
 from utils import frame_to_bgr_image
 
 def main():
-    # 1. Initialize CUDA GPU Inference
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
     print(f"⚡ Running inference on: {device.upper()}")
     
     # Load the lightweight YOLOv8 nano model
     model = YOLO("yolov8n.pt").to(device)
     
-    # 2. Configure the Pipeline using Explicit Profiles
     pipeline = Pipeline()
     config = Config()
     
@@ -71,7 +69,6 @@ def main():
             if color_frame is None or depth_frame is None:
                 continue
                 
-            # 3. Process Frames into OpenCV Compatible Arrays
             # Use the SDK's built-in conversion utility for the color frame
             color_img = frame_to_bgr_image(color_frame)
             if color_img is None:
@@ -81,10 +78,8 @@ def main():
             depth_data = np.frombuffer(depth_frame.get_data(), dtype=np.uint16)
             depth_img = np.resize(depth_data, (depth_frame.get_height(), depth_frame.get_width()))
             
-            # 4. Run Accelerated YOLOv8 Inference
             results = model(color_img, device=device, verbose=False)
             
-            # 5. Extract Detections and Compute Depth Map Overlay
             for result in results:
                 boxes = result.boxes
                 for box in boxes:
@@ -120,7 +115,7 @@ def main():
                     cv2.putText(color_img, text, (x1, max(y1 - 10, 20)), 
                                 cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2)
             
-            # 6. Stream Live Image Matrix
+            # Stream Live Image Matrix
             cv2.imshow("Edge AI 3D Perception Dashboard", color_img)
             
             if cv2.waitKey(1) & 0xFF == ord('q'):
