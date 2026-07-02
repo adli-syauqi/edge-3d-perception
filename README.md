@@ -2,7 +2,7 @@
 
 Real-time object detection with metric depth estimation, running fully on-device on an NVIDIA Jetson Orin Nano. No cloud, no offloading — CUDA-accelerated YOLOv8n inference fused with a depth-aligned RGB-D stream to report live distance-to-object in the viewport.
 
-![Demo](assets/demo.gif.gif)
+![Demo](assets/demo.gif)
 
 ---
 
